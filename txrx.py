@@ -1,3 +1,9 @@
+#!/usr/bin/python
+__author__ = "Shashank Gopikrishna"
+__version__ = "0.0.1"
+__email__ = "shashank.gopikrishna@gmail.com"
+
+
 import RPi.GPIO as gpio
 import time
 import threading
@@ -35,7 +41,7 @@ class RFDriver(object):
 	RF.listen()
 	RF.transmit_char('a')
 	time.sleep(1)
-	print RF.fetchMessage()
+	print RF.fetch_from_buffer()
 	time.sleep(4)
 	RF.terminate()
 	'''
@@ -53,7 +59,7 @@ class RFDriver(object):
 		self.receiveThread = None
 		self.processThread = None
 		self.lock = threading.Lock()
-		self._message = ''
+		self._buffer = ''
 		self._subscriptions = [self._defaultSubscription] if self.debug else []
 		self._setup_gpio()
 
@@ -92,10 +98,10 @@ class RFDriver(object):
 		if self.debug==2: print 'Sent->', ch, 'as', bn
 		return True
 
-	def fetchMessage(self):
+	def fetch_from_buffer(self):
 		self.lock.acquire()
-		m = self._message
-		self._message = ''
+		m = self._buffer
+		self._buffer = ''
 		self.lock.release()
 		return str(m)
 
@@ -110,7 +116,7 @@ class RFDriver(object):
 			else:
 				if high_count: 
 					if self.debug==3: print 'high:',high_count
-					self._message += '0' if high_count < 4 else '1'
+					self._buffer += '0' if high_count < 4 else '1'
 				high_count=0
 			time.sleep(self.half_pulse)
 		print '**Ended RF receiving thread'
@@ -120,8 +126,8 @@ class RFDriver(object):
 	def _processor(self):
 		string=''
 		print '**Started RF processing thread'
-		while self.receiving or len(self._message):
-			string += self.fetchMessage()
+		while self.receiving or len(self._buffer):
+			string += self.fetch_from_buffer()
 			if len(string):
 				try:
 					s = string.index(self.padByte)+len(self.padByte)
