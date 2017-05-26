@@ -10,7 +10,7 @@ import time
 def demo_printer(msg):
 	print 'Received ->', str(msg)
 	
-RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
+RF = RFMessenger(tx_pin=tx, rx_pin=rx)
 RF.subscribe(demo_printer)
 RF.listen()
 
