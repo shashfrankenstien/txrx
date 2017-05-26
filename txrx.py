@@ -11,6 +11,13 @@ import threading
 tx = 37
 rx = 40
 
+
+class DotDict(dict):
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
+
+
 def saltGen(size=64):
 	"""Generates salt for password encryption"""
 	import string, random
@@ -18,38 +25,32 @@ def saltGen(size=64):
 	return str(''.join(random.sample(alph, size)))
 
 
-def to_binary(ch):
-	'''Converts a character to a binary str repr'''
-	b = format(ord(ch), 'b')
-	return (8-len(b))*'0'+b
 
 
-def to_char(bn):
-	'''Converts a binary str to a character'''
-	if bn: 
-		return chr(int(bn[:8], 2))
-	else:
-		raise ValueError('Binary data not found')
+
+class RFProtocol(object):
+	short_delay = 0.001
+	long_delay = short_delay*2
+	half_pulse = short_delay*0.3
+	padByte = '10011111'
+	lastBit = '0'
+
 	
 
-class RFDriver(object):
+class RFDriver(RFProtocol):
 	'''
 	Exposes low level RF transmission and reception methods.
 	debug = 1 displays received character
 
 	RF = RFDriver(tx_pin=tx, rx_pin=rx, debug=1)
 	RF.listen()
-	RF.transmit_char('a')
+	RF.transmit_binary('10101010')
 	time.sleep(1)
-	print RF.fetch_from_buffer()
+	print RF._fetch_from_buffer()
 	time.sleep(4)
 	RF.terminate()
 	'''
-	short_delay = 0.001
-	long_delay = short_delay*2
-	half_pulse = short_delay*0.3
-	padByte = '10011111'
-	lastBit = '0'
+
 
 	def __init__(self, tx_pin, rx_pin, debug=0):
 		self.TX = tx_pin
@@ -71,10 +72,10 @@ class RFDriver(object):
 
 
 	def _defaultSubscription(self, bn):
-		print 'Message Received->', str(bn), '=', to_char(bn)
+		print 'Message Received->', str(bn), '=', self.to_char(bn)
 
 
-	def _transmit_binary(self, code):
+	def transmit_binary(self, code):
 		bn_encl = self.padByte+code+self.lastBit
 		gpio.setmode(gpio.BOARD)
 		for i in bn_encl:
@@ -92,13 +93,8 @@ class RFDriver(object):
 				continue
 		gpio.output(self.TX, 0)
 
-	def transmit_char(self, ch):
-		bn = to_binary(ch)
-		self._transmit_binary(to_binary(ch))
-		if self.debug==2: print 'Sent->', ch, 'as', bn
-		return True
 
-	def fetch_from_buffer(self):
+	def _fetch_from_buffer(self):
 		self.lock.acquire()
 		m = self._buffer
 		self._buffer = ''
@@ -127,7 +123,7 @@ class RFDriver(object):
 		string=''
 		print '**Started RF processing thread'
 		while self.receiving or len(self._buffer):
-			string += self.fetch_from_buffer()
+			string += self._fetch_from_buffer()
 			if len(string):
 				try:
 					s = string.index(self.padByte)+len(self.padByte)
@@ -157,7 +153,7 @@ class RFDriver(object):
 		time.sleep(0.5)
 		return True
 
-	def subscribe(self, func):
+	def subscribe_binary(self, func):
 		self._subscriptions.append(func)
 		return True
 
@@ -170,7 +166,47 @@ class RFDriver(object):
 		
 
 
-class RFProtocol(RFDriver):
+
+
+class RFMessageProtocol2(object):
+	__config__ = 'MASTER'
+	__id__ = 'M'
+	PING='Pi'
+	PONG='Po'
+	MSG_CONTAINER = ('<','>')
+
+	PROTOMAP = DotDict({
+			PING:PONG
+		})
+
+	def _proto_contain(self, msg):
+		return MSG_CONTAINER[0]+str(msg)+MSG_CONTAINER[1]
+
+	def _proto_ping_to(self, dest):
+		'''src|dest|message'''
+		return '{}|{}|{}'.format(self.__id__, dest, self.PING)
+
+	def _proto_pong_to(self, dest):
+		'''src|dest|message'''
+		return '{}|{}|{}'.format(self.__id__, dest, self.PONG)
+
+	def _proto_ping_sniffer(self, msg):
+		try:
+			s,d,m = msg.split('|')
+			if d==self.__id__ and (m == self.PING or m == self.PONG):
+				return s,d,m
+			else:
+				return False
+		except Exception as e:
+			# print str(e)
+			return False
+
+
+
+				  
+
+
+class RFMessenger2(RFDriver, RFMessageProtocol2):
 	'''
 	Higher level access to transmission and message handling.
 
@@ -192,32 +228,168 @@ class RFProtocol(RFDriver):
 	time.sleep(4)
 	RF.terminate()
 
+	# Message packet format = SRC|DEST|SERVICE:COMMAND
 	'''
-	PING = 'P'
-	PONG = 'G'
 
-	def __init__(self, tx_pin, rx_pin, address=None, debug=0):
-		super(RFProtocol, self).__init__(tx_pin, rx_pin, debug)
-		if not address: self.address = 'M'
+	def __init__(self, tx_pin, rx_pin, debug=0):
+		super(RFMessenger2, self).__init__(tx_pin, rx_pin, debug)
 		self._command_tracker = {}
 		self._tracker_timeout = 5
+		self._temp_msg = ''
+		self._ping_tracker = {}
+		self.subscribe_binary(self._binary_reader)
+		self._msg_subscriptions = []
+
+	def to_binary(self, ch):
+		'''Converts a character to a binary str repr'''
+		b = format(ord(ch), 'b')
+		return (8-len(b))*'0'+b
+
+
+	def to_char(self, bn):
+		'''Converts a binary str to a character'''
+		if bn: 
+			return chr(int(bn[:8], 2))
+		else:
+			raise ValueError('Binary data not found')
+
+
+	def transmit_char(self, ch):
+		bn = self.to_binary(ch)
+		self.transmit_binary(bn)
+		if self.debug==2: print 'Sent->', ch, 'as', bn
+		return True
+
+
+	def send(self, string, n=1, delay=1):
+		msg = self._proto_contain(string)
+		for i in xrange(n):
+			for ch in msg:
+				self.transmit_char(ch)
+			if n>1: time.sleep(delay)
+		return True
+
+
+
+	def ping(self, dest, n=1):
+		self._ping_tracker[dest] = ''
+		while self._ping_tracker[dest] != self.PONG and n>0:
+			print 'Pinging {}'.format(dest)
+			self.send(self._proto_ping_to(dest))
+			send_time = time.time()
+			while self._ping_tracker[dest]!= '' and time.time()-send_time < 4:
+				time.sleep(0.5)
+			if self.debug: 
+				if self._ping_tracker[dest]!= '':
+					print 'Ping to {} successful in {} seconds'.format(dest, time.time()-send_time)
+				else:
+					print 'Ping to {} failed'.format(dest)
+			n-=1
+		return self._ping_tracker[dest]!= ''
+
+
+	def _handle_ping(self, ping):
+		s,d,m = ping
+		if m==self.PING:
+			self.send(self._proto_pong_to(dest))
+		elif m==self.PONG:
+			self._ping_tracker[s] = m
+
+
+	def _binary_reader(self, m):
+		try:
+			ch = self.to_char(m)
+			if ch==self.MSG_CONTAINER[0]:
+				self._temp_msg=ch
+			elif ch==self.MSG_CONTAINER[1]:
+				msg = self._temp_msg[1:]
+				ping = self._proto_ping_sniffer(msg)
+				if ping: 
+					self._handle_ping(ping)
+				else:
+					for func in self._msg_subscriptions:
+						func(msg)
+				self._temp_msg = ''
+				if debug: print "Message =",msg
+			else:
+				self._temp_msg += ch
+				
+			if debug==2: print 'Compiling command ...', self._temp_msg, ';', str(m)
+		except Exception as e:
+			if self.debug: print str(e), str(m)
+
+
+	def subscribe(self, func):
+		self._msg_subscriptions.append(func)
+		return True
+
+
+class RFMessageProtocol(object):
+	__config__ = 'MASTER'
+	PING='Pi'
+	PONG='Po'
+	PROTOMAP = DotDict({
+			PING:PONG
+		})
+
+class RFMessenger(RFDriver, RFMessageProtocol):
+	'''
+	Higher level access to transmission and message handling.
+
+	RF = RFProtocol(tx_pin=tx, rx_pin=rx, debug=1)
+	RF.listen()
+	print 'PING =', RF.PING, 'PONG =', RF.PONG
+
+	# Pinging self
+	if RF.ping(RF.address, n=5):  
+		RF.broadcast('Ping success!')
+		print 'Ping success!->',i,'\n'
+	time.sleep(3)
+
+	#Long message
+	RF.broadcast('Hello and welcome to the RF World!')
+	time.sleep(4)
+
+	RF.send_to('Hello and welcome to the RF World!', RF.address)
+	time.sleep(4)
+	RF.terminate()
+
+	# Message packet format = SRC|DEST|SERVICE:COMMAND
+	'''
+
+	def __init__(self, tx_pin, rx_pin, address=None, debug=0):
+		super(RFMessenger, self).__init__(tx_pin, rx_pin, debug)
+		if not address: self.address = 'M'
 		self._temp_command = ''
 		self._ping_tracker = {}
-		self.subscribe(self._subscrFunc)
+		self.subscribe_binary(self._binary_reader)
+
+	def to_binary(self, ch):
+		'''Converts a character to a binary str repr'''
+		b = format(ord(ch), 'b')
+		return (8-len(b))*'0'+b
 
 
-	def _bind_protocol(self, msg, dest='AL'):
-		'''src|dest|message'''
-		return self.address+'|'+dest+'|'+msg
+	def to_char(self, bn):
+		'''Converts a binary str to a character'''
+		if bn: 
+			return chr(int(bn[:8], 2))
+		else:
+			raise ValueError('Binary data not found')
+
+
+	def _bind_protocol(self, command, dest='AL'):
+		'''src|dest|command'''
+		return '{}|{}|{}'.format(self.address, dest, command)
 
 
 	def send_string(self, string, n=1, delay=1):
 		mess_encl = '<'+str(string)+'>'
 		for i in xrange(n):
 			for ch in mess_encl:
-				bn = to_binary(ch)
+				bn = self.to_binary(ch)
 				if debug==2: print 'Sent->', ch, 'as', bn
-				self._transmit_binary(bn)
+				self.transmit_binary(bn)
 			if n>1: time.sleep(delay)
 		return True
 
@@ -243,13 +415,13 @@ class RFProtocol(RFDriver):
 			self.send_to(self.PING, dest)
 			time.sleep(3.5)
 			n-=1
-		if self.debug: print self._ping_tracker
+		# if self.debug: print self._ping_tracker
 		return self._ping_tracker[dest]!= ''
 
 
-	def _subscrFunc(self, m):
+	def _binary_reader(self, m):
 		try:
-			ch = to_char(m)
+			ch = self.to_char(m)
 			if ch=='<':
 				self._temp_command=ch
 			elif ch=='>':
@@ -270,15 +442,18 @@ class RFProtocol(RFDriver):
 			s,d,c = command.split('|')[-3:]
 			print '{} sent {} to {} at {}'.format(s,c,d,time.time()), ';', command
 			time.sleep(0.8)
-			if c==self.PING and d==self.address:
-				self.send_to(self.PONG, s)
-				return True
+			print self.PROTOMAP
+			if c in self.PROTOMAP:
+				if d==self.address or d=='AL':
+					self.send_to(self.PROTOMAP[c], s)
+					return True
 			if c==self.PONG: 
 				self._ping_tracker[s]=c
 				return True
 		except Exception as e:
 			if self.debug: print str(e), str(command)
 		print "Default message display =",command
+
 
 
 
@@ -290,7 +465,7 @@ if __name__ == '__main__':
 	debug = args.debug
 	if debug > 3: debug=3
 	print 'debug =', debug
-	RF = RFProtocol(tx_pin=tx, rx_pin=rx, debug=debug)
+	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
 	RF.listen()
 
 	#Pinging self
