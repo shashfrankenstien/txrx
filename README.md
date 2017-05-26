@@ -4,21 +4,17 @@ Offers low and high level access to transmission and message handling.
 
 ####Usage
 ```python
+from txrx import RFMessenger
+import time
 
-RF = RFProtocol(tx_pin=tx, rx_pin=rx, debug=1)
+def demo_printer(msg):
+	print 'Received ->', str(msg)
+	
+RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
+RF.subscribe(demo_printer)
 RF.listen()
-print 'PING =', RF.PING, 'PONG =', RF.PONG
+RF.ping(dest=RF.__id__, n=3, silent=False)
 
-# Pinging self
-if RF.ping(RF.address, n=5):  
-	RF.broadcast('Ping success!')
-	print 'Ping success!->',i,'\n'
+RF.send('string')
 time.sleep(3)
-
-#Long message
-RF.broadcast('Hello and welcome to the RF World!')
-time.sleep(4)
-
-RF.send_to('Hello and welcome to the RF World!', RF.address)
-time.sleep(4)
 RF.terminate()
