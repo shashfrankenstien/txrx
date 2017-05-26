@@ -12,22 +12,6 @@ tx = 37
 rx = 40
 
 
-class DotDict(dict):
-    __getattr__ = dict.get
-    __setattr__ = dict.__setitem__
-    __delattr__ = dict.__delitem__
-
-
-def saltGen(size=64):
-	"""Generates salt for password encryption"""
-	import string, random
-	alph = str(string.lowercase+string.digits)*2
-	return str(''.join(random.sample(alph, size)))
-
-
-
-
-
 class TXRXProtocol(object):
 	short_delay = 0.001
 	long_delay = short_delay*2
