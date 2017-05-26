@@ -1,5 +1,5 @@
 # txrx
-Python package for interfacing _433MHz RF tx-rx modules_ with a Raspberry pi
+Python package for interfacing _433MHz RF tx-rx modules_ with a Raspberry pi.
 Offers low and high level access to transmission and message handling.
 
 ####Usage
