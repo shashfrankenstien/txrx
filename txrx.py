@@ -65,8 +65,6 @@ class RFDriver(TXRXProtocol):
 	RF = RFDriver(tx_pin=tx, rx_pin=rx, debug=1)
 	RF.listen()
 	RF.transmit_binary('10101010')
-	time.sleep(1)
-	print RF._fetch_from_buffer()
 	time.sleep(4)
 	RF.terminate()
 	'''
@@ -356,9 +354,7 @@ if __name__ == '__main__':
 	RFd = RFDriver(tx_pin=tx, rx_pin=rx, debug=1)
 	RFd.listen()
 	RFd.transmit_binary('10101010')
-	time.sleep(1)
-	print RFd._fetch_from_buffer()
-	time.sleep(4)
+	time.sleep(3)
 	RFd.terminate()
 
 
