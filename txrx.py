@@ -288,6 +288,7 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 	def _binary_reader(self, m):
 		try:
 			ch = self.to_char(m)
+			if self.debug: print ch
 			if ch==self.MSG_CONTAINER[0]:
 				self._temp_msg=ch
 			elif ch==self.MSG_CONTAINER[1]:
@@ -303,7 +304,7 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 			else:
 				self._temp_msg += ch
 				
-			if debug==2: print 'Compiling command ...', self._temp_msg, ';', str(m)
+			if self.debug==2: print 'Compiling command ...', self._temp_msg, ';', str(m)
 		except Exception as e:
 			if self.debug: print str(e), str(m)
 
