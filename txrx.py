@@ -13,7 +13,7 @@ rx = 40
 
 
 class TXRXProtocol(object):
-	short_delay = 0.0001
+	short_delay = 0.001
 	long_delay = short_delay*2
 	half_pulse = short_delay*0.3
 	stabilizer_byte = '0000'
@@ -335,11 +335,11 @@ if __name__ == '__main__':
 	time.sleep(3)
 	RF.terminate()
 
-	RFd = RFDriver(tx_pin=tx, rx_pin=rx, debug=1)
-	RFd.listen()
-	RFd.transmit_binary('10101010')
-	time.sleep(3)
-	RFd.terminate()
+	# RFd = RFDriver(tx_pin=tx, rx_pin=rx, debug=1)
+	# RFd.listen()
+	# RFd.transmit_binary('10101010')
+	# time.sleep(3)
+	# RFd.terminate()
 
 
 
