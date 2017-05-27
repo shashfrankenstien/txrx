@@ -292,15 +292,16 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 			if ch==self.MSG_CONTAINER[0]:
 				self._temp_msg=ch
 			elif ch==self.MSG_CONTAINER[1]:
-				msg = self._temp_msg[1:]
-				ping = self._proto_ping_sniffer(msg)
-				if ping: 
-					self._handle_ping(ping)
-				else:
-					for func in self._msg_subscriptions:
-						func(msg)
-				self._temp_msg = ''
-				if debug: print "Message =",msg
+				if self._temp_msg:
+					msg = self._temp_msg[1:]
+					ping = self._proto_ping_sniffer(msg)
+					if ping: 
+						self._handle_ping(ping)
+					else:
+						for func in self._msg_subscriptions:
+							func(msg)
+					self._temp_msg = ''
+					if debug: print "Message =",msg
 			else:
 				self._temp_msg += ch
 				
