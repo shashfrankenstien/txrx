@@ -332,10 +332,13 @@ if __name__ == '__main__':
 	if debug > 3: debug=3
 	print 'debug =', debug
 
-	def demo_printer(msg):
-		print 'Received ->', str(msg)
 
 	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
+
+	def demo_printer(msg):
+		print 'Received -> '+str(msg)
+		RF.send('Received -> '+str(msg))
+
 	RF.subscribe(demo_printer)
 	RF.listen()
 	if RF.ping(RF.__id__, n=3, silent=False):
