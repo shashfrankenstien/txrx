@@ -148,7 +148,6 @@ class RFDriver(TXRXProtocol):
 		self.processThread = threading.Thread(target=self._processor)
 		self.processThread.start()
 		time.sleep(0.5)
-		self.transmit_binary('000000000000')
 		return True
 
 	def subscribe_binary(self, func):
