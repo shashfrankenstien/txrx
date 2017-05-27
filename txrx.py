@@ -267,6 +267,7 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 			self._ping_tracker[dest] = ''
 			if not silent: print 'Pinging {}, attempts remaining {}'.format(dest, n-1)
 			self.send(self._proto_ping_to(dest))
+			self.send(self._proto_ping_to(dest))
 			send_time = time.time()
 			while self._ping_tracker[dest] == '' and time.time()-send_time < 2:
 				time.sleep(0.01) 
