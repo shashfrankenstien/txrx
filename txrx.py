@@ -137,7 +137,7 @@ class RFDriver(TXRXProtocol):
 						except Exception as e: 
 							if self.debug==2: print str(e)
 				string = remainder
-			time.sleep(0.1)
+			time.sleep(0.05)
 		print '**Ended RF processing thread'
 
 
@@ -264,7 +264,7 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 			self.send(self._proto_ping_to(dest))
 			send_time = time.time()
 			while self._ping_tracker[dest] == '' and time.time()-send_time < 4:
-				time.sleep(0.1) 
+				time.sleep(0.01) 
 			if not silent:
 				if self._ping_tracker[dest]!= '':
 					print 'Ping to {} successful in {} seconds'.format(dest, time.time()-send_time)
@@ -272,7 +272,7 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 				else:
 					print 'Ping to {} failed'.format(dest)
 			n-=1
-			if n>0: time.sleep(4)
+			if n>0: time.sleep(1)
 			
 		return self._ping_tracker[dest]!= ''
 
