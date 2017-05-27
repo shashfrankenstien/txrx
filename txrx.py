@@ -261,13 +261,13 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 		return True
 
 
-	def ping(self, dest, n=1, silent=True):
+	def ping(self, dest, n=1, double=False, silent=True):
 		self._ping_tracker[dest] = ''
 		while self._ping_tracker[dest] != self.PONG and n>0:
 			self._ping_tracker[dest] = ''
 			if not silent: print 'Pinging {}, attempts remaining {}'.format(dest, n-1)
 			self.send(self._proto_ping_to(dest))
-			self.send(self._proto_ping_to(dest))
+			if double: self.send(self._proto_ping_to(dest))
 			send_time = time.time()
 			while self._ping_tracker[dest] == '' and time.time()-send_time < 2:
 				time.sleep(0.01) 
@@ -338,7 +338,7 @@ if __name__ == '__main__':
 	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
 	RF.subscribe(demo_printer)
 	RF.listen()
-	if RF.ping(RF.__id__, n=3, silent=False):
+	if RF.ping(RF.__id__, n=3, silent=False, double=True):
 		RF.send('3way h-shake is an extremely long message. Seems like it will shit out.')
 	time.sleep(3)
 	RF.terminate()
