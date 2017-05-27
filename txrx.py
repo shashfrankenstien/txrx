@@ -13,9 +13,9 @@ rx = 40
 
 
 class TXRXProtocol(object):
-	short_delay = 0.0002
+	short_delay = 0.0004
 	long_delay = short_delay*2
-	half_pulse = short_delay*0.258
+	half_pulse = short_delay*0.26
 	stabilizer_byte = '0000'
 	pad_byte = '10011111'
 	trail_byte = '010'
