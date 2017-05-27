@@ -337,7 +337,8 @@ if __name__ == '__main__':
 
 	def demo_printer(msg):
 		print 'Received -> '+str(msg)
-		RF.send('Received -> '+str(msg))
+		if '3way' in msg:
+			RF.send('Received handshake')
 
 	RF.subscribe(demo_printer)
 	RF.listen()
