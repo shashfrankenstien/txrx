@@ -137,8 +137,8 @@ class RFDriver(TXRXProtocol):
 						except Exception as e: 
 							if self.debug==2: print str(e)
 				string = remainder
-			if len(string)<16: time.sleep(0.1)
-			time.sleep(0.02)
+			# if len(string)<16: time.sleep(0.1)
+			time.sleep(0.05)
 		print '**Ended RF processing thread'
 
 
