@@ -3,8 +3,8 @@ import time
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-t','--tx', help='Transmitter pin')
-parser.add_argument('-r','--rx', help='Receiver pin')
+parser.add_argument('-t','--tx', help='Transmitter pin', type=int)
+parser.add_argument('-r','--rx', help='Receiver pin', type=int)
 
 args = parser.parse_args()
 tx = args.tx
