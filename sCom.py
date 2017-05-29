@@ -1,7 +1,29 @@
-from txrx import RFMessenger
+from txrx import RFMessenger, rand_id_gen
+import time
+
+
+tx = 37
+rx = 40
+
+
+class AddressMap(RFMessenger):
+	def __init__(self, tx_pin=tx, rx_pin=rx, ID=None):
+		super(RFMessenger2, self).__init__(tx_pin, rx_pin)
+		if ID: 
+			self.setID(ID)
+		else:
+			self.setID(rand_id_gen(2))
+		self._discovered = False
+
+	def setID(self, ID):
+		self.__id__ = ID
+
+	def discover_me(self):
+		while
+
 
 start = time.time()
-RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
+RF = RFMessenger(tx_pin=tx, rx_pin=rx)
 
 def demo_printer(msg):
 	print 'Received -> '+str(msg)

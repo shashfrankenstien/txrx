@@ -11,6 +11,10 @@ import threading
 tx = 37
 rx = 40
 
+def rand_id_gen(size=64):
+	"""Generates salt for password encryption"""
+	alph = str(string.lowercase+string.digits)*2
+	return str(''.join(random.sample(alph, size)))
 
 class TXRXProtocol(object):
 	# short_delay = 0.001
@@ -223,8 +227,6 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 
 	def __init__(self, tx_pin, rx_pin, debug=0):
 		super(RFMessenger, self).__init__(tx_pin, rx_pin, debug)
-		self._command_tracker = {}
-		self._tracker_timeout = 5
 		self._temp_msg = ''
 		self._ping_tracker = {}
 		self.subscribe_binary(self._binary_reader)
