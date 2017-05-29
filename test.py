@@ -27,7 +27,7 @@ def command():
 				break
 		print 'unrecognized'
 
-RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=2)
+RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=3)
 RF.subscribe(defFunc)
 RF.listen()
 

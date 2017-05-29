@@ -18,8 +18,8 @@ class AddressMap(RFMessenger):
 	def setID(self, ID):
 		self.__id__ = ID
 
-	def discover_me(self):
-		while
+	# def discover_me(self):
+	# 	while
 
 
 start = time.time()
