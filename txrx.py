@@ -309,7 +309,7 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 						for func in self._msg_subscriptions:
 							func(msg)
 					self._temp_msg = ''
-					if debug: print "Message =",msg
+					if self.debug: print "Message =",msg
 			else:
 				self._temp_msg += ch
 				
