@@ -35,7 +35,7 @@ class TXRXProtocol(object):
 	# short_delay = 0.001
 	# half_pulse = short_delay*0.3
 	short_delay = 0.0004
-	half_pulse = short_delay*0.29
+	half_pulse = short_delay*0.25
 	# short_delay = 0.0006
 	# half_pulse = short_delay*0.27
 	long_delay = short_delay*2
