@@ -29,5 +29,4 @@ class CPUInfo(dict):
 
 
 if __name__ == '__main__':
-	c = CPUInfo()
-	print c.who_am_i()
+	print CPUInfo.who_am_i()
