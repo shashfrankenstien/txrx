@@ -37,8 +37,8 @@ class TXRXProtocol(object):
 	short_delay = 0.0004
 	half_pulse = short_delay*0.29
 	# short_delay = 0.0006
-	long_delay = short_delay*2
 	# half_pulse = short_delay*0.27
+	long_delay = short_delay*2
 	stabilizer_byte = '0000'
 	pad_byte = '10011111'
 	trail_byte = '010'
@@ -339,32 +339,51 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 
 
 
+def tune(debug=0):
+	t = 0.24
+	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
+	RF.half_pulse = RF.short_delay*t
+	l = threading.Lock()
+	RF.listen()
+	while t<=3.000:
+		l.acquire()
+		RF.half_pulse = RF.short_delay*t
+		l.release()
+		print '#############    sleep time = {}'.format(t)
+		if RF.ping(RF.__id__, n=1, silent=False):
+		t += 0.001
+	RF.terminate()
+
 
 if __name__ == '__main__':
 	import argparse
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-d', '--debug', help='Debug modes 0, 1 or 2', action="count", default=0)
+	parser.add_argument('-t', '--tune', help='Debug modes 0, 1 or 2', action="store_true")
 	args = parser.parse_args()
 	debug = args.debug
 	if debug > 3: debug=3
 	print 'debug =', debug
 
-	start = time.time()
-	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
+	if not args.tune:
+		start = time.time()
+		RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
 
-	def demo_printer(msg):
-		print 'Received -> '+str(msg)
-		if '3way' in msg:
-			print 'replying'
-			RF.send('Upgrade to 4way')
+		def demo_printer(msg):
+			print 'Received -> '+str(msg)
+			if '3way' in msg:
+				print 'replying'
+				RF.send('Upgrade to 4way')
 
-	RF.subscribe(demo_printer)
-	RF.listen()
-	if RF.ping(RF.__id__, n=3, silent=False):
-		RF.send('3way h-shake is an extremely long message. Seems like it will shit out.')
-	print '3way completed in {}'.format(time.time()-start)
-	time.sleep(4)
-	RF.terminate()
+		RF.subscribe(demo_printer)
+		RF.listen()
+		if RF.ping(RF.__id__, n=3, silent=False):
+			RF.send('3way h-shake is an extremely long message. Seems like it will shit out.')
+		print '3way completed in {}'.format(time.time()-start)
+		time.sleep(4)
+		RF.terminate()
+	else:
+		tune(debug)
 
 	# RFd = RFDriver(tx_pin=tx, rx_pin=rx, debug=1)
 	# RFd.listen()
