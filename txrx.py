@@ -340,7 +340,7 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 
 
 def tune(debug=0):
-	points = {}
+	points = []
 	t = 0.22
 	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
 	l = threading.Lock()
@@ -353,12 +353,12 @@ def tune(debug=0):
 		print '#############    sleep time = {}'.format(t)
 		start = time.time()
 		if RF.ping(RF.__id__, n=1, silent=False):
-			points[t] = time.time()-start
+			points.append((t, time.time()-start))
 		t += 0.001
 
 	RF.terminate()
 	import json
-	print json.dumps(points, indent=4)
+	for i in points: print i
 
 
 if __name__ == '__main__':
