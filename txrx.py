@@ -350,7 +350,7 @@ def tune(debug=0):
 		RF.half_pulse = RF.short_delay*t
 		l.release()
 		print '#############    sleep time = {}'.format(t)
-		if RF.ping(RF.__id__, n=1, silent=False):
+		RF.ping(RF.__id__, n=1, silent=False)
 		t += 0.001
 	RF.terminate()
 
