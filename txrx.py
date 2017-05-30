@@ -3,10 +3,14 @@ __author__ = "Shashank Gopikrishna"
 __version__ = "0.0.1"
 __email__ = "shashank.gopikrishna@gmail.com"
 
-
-import RPi.GPIO as gpio
+from cpuinfo import CPUInfo
 import time
 import threading
+
+
+
+import RPi.GPIO as gpio
+
 
 tx = 37
 rx = 40
