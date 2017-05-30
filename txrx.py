@@ -7,17 +7,23 @@ import cpuinfo
 import time
 import threading
 
+# Check if it is a respberry pi
 if cpuinfo.this_is_a_pi():
 	import RPi.GPIO as gpio
+	tx = 37
+	rx = 40
+
+# Check if it is a C.H.I.P
 elif cpuinfo.this_is_a_chip():
 	import CHIP_IO.GPIO as gpio
+
+# Neither -> quit()
 else:
 	print 'Device not supported'
 	quit()
 
 
-tx = 37
-rx = 40
+
 
 def rand_id_gen(size=64):
 	"""Generates salt for password encryption"""
@@ -28,11 +34,11 @@ def rand_id_gen(size=64):
 class TXRXProtocol(object):
 	# short_delay = 0.001
 	# half_pulse = short_delay*0.3
-	# short_delay = 0.0004
-	# half_pulse = short_delay*0.26
-	short_delay = 0.0006
+	short_delay = 0.0004
+	half_pulse = short_delay*0.26
+	# short_delay = 0.0006
 	long_delay = short_delay*2
-	half_pulse = short_delay*0.27
+	# half_pulse = short_delay*0.27
 	stabilizer_byte = '0000'
 	pad_byte = '10011111'
 	trail_byte = '010'
