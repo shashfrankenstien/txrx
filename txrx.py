@@ -16,6 +16,7 @@ def rand_id_gen(size=64):
 	alph = str(string.lowercase+string.digits)*2
 	return str(''.join(random.sample(alph, size)))
 
+
 class TXRXProtocol(object):
 	# short_delay = 0.001
 	# half_pulse = short_delay*0.3
