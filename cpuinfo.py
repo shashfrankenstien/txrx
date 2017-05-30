@@ -6,29 +6,32 @@ class dotdict(dict):
 
 CPUInfo = dotdict()
 
-with open('/proc/cpuinfo', 'r') as cpuinfo:
-	for i in cpuinfo:
-		try:
-			k, v = i.strip().split(':')
-			CPUInfo[str(k).strip()] = str(v).strip()
-		except:
-			pass
+try:
+	with open('/proc/cpuinfo', 'r') as cpuinfo:
+		for i in cpuinfo:
+			try:
+				k, v = i.strip().split(':')
+				CPUInfo[str(k).strip()] = str(v).strip()
+			except: pass
+except: pass
 
 def this_is_a_pi():
-	if 'BCM' in CPUInfo.Hardware:
+	if 'Hardware' in CPUInfo and 'BCM' in CPUInfo.Hardware:
 		return True
-	else: return False
+	return False
 
 def this_is_a_chip():
-	if 'Allwinner' in CPUInfo.Hardware:
+	if 'Hardware' in CPUInfo and 'Allwinner' in CPUInfo.Hardware:
 		return True
-	else: return False
+	return False
 
 def who_am_i():
 	if this_is_a_chip():
 		return 'NTC CHIP'
 	if this_is_a_pi():
 		return 'RASPBERRY PI'
+	else:
+		return 'Device is not compatible'
 
 
 if __name__ == '__main__':
