@@ -340,12 +340,12 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 
 
 def tune(debug=0):
-	t = 0.24
+	t = 0.22
 	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
 	RF.half_pulse = RF.short_delay*t
 	l = threading.Lock()
 	RF.listen()
-	while t<=3.000:
+	while t<=0.300:
 		l.acquire()
 		RF.half_pulse = RF.short_delay*t
 		l.release()
