@@ -340,19 +340,27 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 
 
 def tune(debug=0):
+	from kmeans import Point, kmeansCluster
+	import random
+
+	points = []
 	t = 0.22
 	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
-	RF.half_pulse = RF.short_delay*t
 	l = threading.Lock()
 	RF.listen()
+
 	while t<=0.300:
 		l.acquire()
 		RF.half_pulse = RF.short_delay*t
 		l.release()
 		print '#############    sleep time = {}'.format(t)
-		RF.ping(RF.__id__, n=1, silent=False)
+		if RF.ping(RF.__id__, n=1, silent=False):
+			points.append(Point(0,t))
 		t += 0.001
+
 	RF.terminate()
+	initial_centroids = [Point(0,0.22,cluster=0), Point(0,0.30,cluster=1)]
+	print kmeansCluster(points, initial_centroids)
 
 
 if __name__ == '__main__':
