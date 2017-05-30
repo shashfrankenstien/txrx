@@ -12,7 +12,23 @@ class CPUInfo(dict):
 				except:
 					pass
 
+	def this_is_a_pi(self):
+		if 'BCM' in self.Hardware:
+			return True
+		else: return False
+
+	def this_is_a_chip(self):
+		if 'Allwinner' in self.Hardware:
+			return True
+		else: return False
+
+	def who_am_i(self):
+		if self.this_is_a_chip():
+			return 'NTC CHIP'
+		if self.this_is_a_pi():
+			return 'RASPBERRY PI'
+
 
 if __name__ == '__main__':
 	c = CPUInfo()
-	print c
+	print c.who_am_i()
