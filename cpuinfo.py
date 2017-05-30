@@ -15,3 +15,4 @@ class CPUInfo(dict):
 
 if __name__ == '__main__':
 	c = cpuinfo()
+	print c
