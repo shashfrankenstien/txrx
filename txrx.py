@@ -290,7 +290,7 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 				time.sleep(0.01) 
 			if not silent:
 				if self._ping_tracker[dest]!= '':
-					print 'Ping to {} successful in {} seconds'.format(dest, time.time()-send_time)
+					print 'Ping to {} successful at {}, completed in {} seconds'.format(dest, 1/self.half_pulse, time.time()-send_time)
 					return True
 				else:
 					print 'Ping to {} failed'.format(dest)
