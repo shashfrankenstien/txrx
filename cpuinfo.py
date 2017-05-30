@@ -8,7 +8,7 @@ class CPUInfo(dict):
 			for i in cpuinfo:
 				try:
 					k, v = i.strip().split(':')
-					self[k] = v
+					self[str(k).strip()] = str(v).strip()
 				except:
 					pass
 
