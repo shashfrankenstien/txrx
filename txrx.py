@@ -3,13 +3,17 @@ __author__ = "Shashank Gopikrishna"
 __version__ = "0.0.1"
 __email__ = "shashank.gopikrishna@gmail.com"
 
-from cpuinfo import CPUInfo
+import cpuinfo
 import time
 import threading
 
-
-
-import RPi.GPIO as gpio
+if cpuinfo.this_is_a_pi():
+	import RPi.GPIO as gpio
+elif cpuinfo.this_is_a_chip():
+	import CHIP_IO.GPIO as gpio
+else:
+	print 'Device not supported'
+	quit()
 
 
 tx = 37
@@ -80,7 +84,7 @@ class RFDriver(TXRXProtocol):
 		self._setup_gpio()
 
 	def _setup_gpio(self):
-		gpio.setmode(gpio.BOARD)
+		if cpuinfo.this_is_a_pi(): gpio.setmode(gpio.BOARD)
 		gpio.setwarnings(False)
 		gpio.setup(self.TX, gpio.OUT, initial=gpio.LOW)
 		gpio.setup(self.RX, gpio.IN, pull_up_down=gpio.PUD_DOWN)
@@ -92,7 +96,7 @@ class RFDriver(TXRXProtocol):
 
 	def transmit_binary(self, code):
 		bn_encl = self._byte_contain(code)
-		gpio.setmode(gpio.BOARD)
+		if cpuinfo.this_is_a_pi(): gpio.setmode(gpio.BOARD)
 		for i in bn_encl:
 			if i == '1':
 				gpio.output(self.TX, 1)
@@ -120,7 +124,7 @@ class RFDriver(TXRXProtocol):
 		high_count = 0
 		print '**Started RF receiving thread'
 		while self.receiving:
-			gpio.setmode(gpio.BOARD)
+			if cpuinfo.this_is_a_pi(): gpio.setmode(gpio.BOARD)
 			gpio.setup(self.RX, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 			if gpio.input(self.RX):
 				high_count+=1
