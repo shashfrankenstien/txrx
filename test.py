@@ -114,7 +114,7 @@ if __name__ == '__main__':
 	print 'debug =', debug
 
 	if args.tune:
-		start, end, step = [i.strip() for i in raw_input('start, end, step: ').split(',')]
+		start, end, step = [float(i.strip()) for i in raw_input('start, end, step: ').split(',')]
 		tune(args, debug, start, end, step)
 	elif args.cli:
 		cli(args, debug)
