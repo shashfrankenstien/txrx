@@ -64,15 +64,19 @@ def cli(args, debug=0):
 	RF.subscribe(defFunc)
 	RF.listen()
 	
-	def ping():
-		RF.ping(RF.__id__, silent=False)
+	def ping(addr=None):
+		if addr:
+			RF.ping(addr, silent=False)
+		else:
+			RF.ping(RF.__id__, silent=False)
 
 	def command():
 		while True:
 			c = raw_input()
 			if c:
-				if c=='p':
-					ping()
+				c.split()
+				if c[0]=='p':
+					ping(c[1])
 				elif c=='q':
 					break
 			print 'unrecognized'
