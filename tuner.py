@@ -14,9 +14,13 @@ class RFTuner(RFMessenger):
 		print 'rose'
 
 	def listen_falling(self, x):
+		print x
 		print 'fell'
 
 
 if __name__ == '__main__':
 	RF = RFTuner(tx_pin='CSID0', rx_pin='XIO-P0')
-	raw_input()
+	p = raw_input()
+	if p[0]=='p':
+		RF.ping(silent=False)
+		time.sleep(2)
