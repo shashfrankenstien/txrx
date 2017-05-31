@@ -32,41 +32,26 @@ def bitwise(args, debug=0):
 	time.sleep(3)
 	RF.terminate()
 
+
 def tune(args, debug=0):
+	global cont
 	cont = True
 	points = []
 
-	def run_tuner():
-		global cont
-		t = threading.Thread(target=tuneit)
-		t.start()
-		while True:
-			r = raw_input()
-			if r and r[0]=='q':
-				print 'quiting'
-				cont = False
-				t.join()
-				break
+	t = 0.18
+	l = threading.Lock()
+	RF.listen()
+	while cont and t<=0.330:
+		l.acquire()
+		RF.half_pulse = RF.short_delay*t
+		l.release()
+		print '#############    sleep time = {}'.format(t)
+		start = time.time()
+		if RF.ping(silent=False):
+			points.append((t, time.time()-start))
+		t += 0.001
+	RF.terminate()
 
-	def tuneit():
-		global cont
-		t = 0.18
-		RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
-		l = threading.Lock()
-		RF.listen()
-		while cont and t<=0.330:
-			l.acquire()
-			RF.half_pulse = RF.short_delay*t
-			l.release()
-			print '#############    sleep time = {}'.format(t)
-			start = time.time()
-			if RF.ping(RF.__id__, n=1, silent=False):
-				points.append((t, time.time()-start))
-			t += 0.001
-		RF.terminate()
-
-
-	run_tuner()
 	import json
 	for i in points: print i
 
