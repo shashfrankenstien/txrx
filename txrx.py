@@ -8,13 +8,13 @@ import threading
 import cpuinfo
 from sleepTest import sleeperror
 
-# Check if it is a respberry pi
+# Check if device is a respberry pi
 if cpuinfo.this_is_a_pi():
 	import RPi.GPIO as gpio
 	tx = 37
 	rx = 40
 
-# Check if it is a C.H.I.P
+# Check if device is a C.H.I.P
 elif cpuinfo.this_is_a_chip():
 	import CHIP_IO.GPIO as gpio
 	gpio.cleanup()
@@ -113,14 +113,14 @@ class RFDriver(TXRXProtocol):
 		if cpuinfo.this_is_a_pi(): gpio.setmode(gpio.BOARD)
 		for i in bn_encl:
 			if i == '1':
-				gpio.output(self.TX, 1)
+				gpio.output(self.TX, gpio.HIGH)
 				time.sleep(self.short_delay)
-				gpio.output(self.TX, 0)
+				gpio.output(self.TX, gpio.LOW)
 				time.sleep(self.long_delay)
 			elif i == '0':
-				gpio.output(self.TX, 1)
+				gpio.output(self.TX, gpio.HIGH)
 				time.sleep(self.long_delay)
-				gpio.output(self.TX, 0)
+				gpio.output(self.TX, gpio.LOW)
 				time.sleep(self.short_delay)
 			else:
 				continue
