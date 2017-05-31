@@ -1,4 +1,4 @@
-from txrx import RFMessenger, gpio
+from txrx import RFMessenger, gpio, cpuinfo
 import threading, time
 
 
@@ -19,7 +19,10 @@ class RFTuner(RFMessenger):
 
 
 if __name__ == '__main__':
-	RF = RFTuner(tx_pin='CSID0', rx_pin='XIO-P0')
+	if cpuinfo.this_is_a_chip():
+		RF = RFTuner(tx_pin='CSID0', rx_pin='XIO-P0')
+	else:
+		RF = RFTuner(tx_pin=37, rx_pin=40)
 	p = raw_input()
 	if p[0]=='p':
 		RF.ping(silent=False)
