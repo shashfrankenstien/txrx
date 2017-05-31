@@ -33,21 +33,21 @@ def bitwise(args, debug=0):
 	RF.terminate()
 
 
-def tune(args, debug=0):
+def tune(args, debug=0, start=0.18, end=0.330, step=0.001):
 	points = []
-	t = 0.18
+	t = start
 
 	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
 	if args.samp: RF.half_pulse = RF.short_delay*args.samp
 	RF.listen()
 
-	while t<=0.330:
+	while t<=end:
 		RF.half_pulse = RF.short_delay*t
 		print '#############    sleep time = {}'.format(t)
 		start = time.time()
 		if RF.ping(RF.__id__, silent=False):
 			points.append((t, time.time()-start))
-		t += 0.001
+		t += step
 	RF.terminate()
 
 	import json
@@ -115,8 +115,7 @@ if __name__ == '__main__':
 
 	if args.tune:
 		start, end, step = [i.strip() for i in raw_input('start, end, step: ').split(',')]
-		print start, end, step
-		tune(args, debug)
+		tune(args, debug, start, end, step)
 	elif args.cli:
 		cli(args, debug)
 
