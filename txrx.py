@@ -161,7 +161,7 @@ class RFDriver(TXRXProtocol):
 			else: 
 				if high_count > 1 and high_count < 10:
 					if cpuinfo.this_is_a_chip():
-						if high_count < 3:
+						if high_count < 5:
 							bit = '1'# if cpuinfo.this_is_a_pi() else '1'
 						else: 
 							bit = '0'# if cpuinfo.this_is_a_pi() else '0'
