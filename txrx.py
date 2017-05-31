@@ -36,7 +36,7 @@ def rand_id_gen(size=64):
 
 class TXRXProtocol(object):
 	short_delay = 0.001
-	half_pulse = short_delay*0.3
+	half_pulse = short_delay*0.26
 	# short_delay = 0.0004
 	# half_pulse = short_delay*0.222
 	# short_delay = 0.0006
