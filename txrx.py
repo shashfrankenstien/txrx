@@ -339,6 +339,7 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 
 
 
+
 def tune(debug=0):
 	points = []
 	t = 0.22
@@ -361,6 +362,14 @@ def tune(debug=0):
 	for i in points: print i
 
 
+def demo_printer(msg):
+	print 'Received -> '+str(msg)
+	if '3way' in msg:
+		print 'replying'
+		RF.send('Upgrade to 4way')
+
+
+
 if __name__ == '__main__':
 	import argparse
 	parser = argparse.ArgumentParser()
@@ -374,13 +383,6 @@ if __name__ == '__main__':
 	if not args.tune:
 		start = time.time()
 		RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
-
-		def demo_printer(msg):
-			print 'Received -> '+str(msg)
-			if '3way' in msg:
-				print 'replying'
-				RF.send('Upgrade to 4way')
-
 		RF.subscribe(demo_printer)
 		RF.listen()
 		if RF.ping(RF.__id__, n=3, silent=False):
