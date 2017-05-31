@@ -101,7 +101,7 @@ if __name__ == '__main__':
 		rx = int(args.rx) if args.tx else 40
 	else:
 		tx = args.tx if args.tx else 'CSID0'
-		rx = args.rx if args.rx else 'CSID1'
+		rx = args.rx if args.rx else 'XIO-P0'
 
 	
 
