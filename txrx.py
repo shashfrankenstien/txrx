@@ -16,6 +16,7 @@ if cpuinfo.this_is_a_pi():
 # Check if it is a C.H.I.P
 elif cpuinfo.this_is_a_chip():
 	import CHIP_IO.GPIO as gpio
+	gpio.cleanup()
 	tx = 'CSID0'
 	rx = 'CSID1'
 
