@@ -146,7 +146,7 @@ class RFDriver(TXRXProtocol):
 			else: 
 				if high_count > 1 and high_count < 8:
 					if cpuinfo.this_is_a_pi():
-						if high_count < 4:
+						if high_count <= 4:
 							bit = '0'
 						else: 
 							bit = '1'
