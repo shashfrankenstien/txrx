@@ -35,10 +35,10 @@ def rand_id_gen(size=64):
 
 
 class TXRXProtocol(object):
-	# short_delay = 0.001
-	# half_pulse = short_delay*0.3
-	short_delay = 0.0004
-	half_pulse = short_delay*0.222
+	short_delay = 0.001
+	half_pulse = short_delay*0.3
+	# short_delay = 0.0004
+	# half_pulse = short_delay*0.222
 	# short_delay = 0.0006
 	# half_pulse = short_delay*0.27
 	long_delay = short_delay*2
@@ -142,7 +142,7 @@ class RFDriver(TXRXProtocol):
 				high_count+=1
 			else:
 				if high_count: 
-					if self.debug==3: print 'high:',high_count, '= 0' if high_count < 4 else '= 1'
+					if self.debug==3: print 'high:',high_count, '\t0' if high_count < 4 else '\t1'
 					self._buffer += '0' if high_count < 4 else '1'
 				high_count=0
 			time.sleep(self.half_pulse)
@@ -382,7 +382,7 @@ if __name__ == '__main__':
 	parser.add_argument('-d', '--debug', help='Debug modes 0, 1 or 2', action="count", default=0)
 	parser.add_argument('-t', '--tune', help='Tuning monitor', action="store_true")
 	parser.add_argument('-b', '--bitwise', help='Bitwise send', type=str)
-	parser.add_argument('-s', '--samp', help='Receiver thread sampling factor', default=0.244, type=float)
+	parser.add_argument('-s', '--samp', help='Receiver thread sampling factor', type=float)
 
 	args = parser.parse_args()
 	debug = args.debug
@@ -393,7 +393,7 @@ if __name__ == '__main__':
 		tune(debug)
 	elif args.bitwise:
 		RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=3)
-		RF.half_pulse = RF.short_delay*args.samp
+		if args.samp: RF.half_pulse = RF.short_delay*args.samp
 		RF.listen()
 		RF.transmit_binary(args.bitwise)
 		time.sleep(3)
@@ -401,7 +401,7 @@ if __name__ == '__main__':
 	else:
 		start = time.time()
 		RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
-		RF.half_pulse = RF.short_delay*args.samp
+		if args.samp: RF.half_pulse = RF.short_delay*args.samp
 		RF.subscribe(demo_printer)
 		RF.listen()
 		if RF.ping(RF.__id__, n=3, silent=False):
