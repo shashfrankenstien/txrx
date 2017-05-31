@@ -198,8 +198,12 @@ class RFDriver(TXRXProtocol):
 
 	def terminate(self):
 		self.receiving = False
-		self.receiveThread.join()
-		self.processThread.join()
+		try:
+			self.receiveThread.join()
+		except: pass
+		try:
+			self.processThread.join()
+		except: pass
 		gpio.cleanup()
 		return True
 		
