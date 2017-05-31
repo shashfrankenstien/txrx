@@ -112,12 +112,14 @@ class RFDriver(TXRXProtocol):
 		bn_encl = self._byte_contain(code)
 		if cpuinfo.this_is_a_pi(): gpio.setmode(gpio.BOARD)
 		for i in bn_encl:
-			high_time = self.long_delay
-			low_time = self.short_delay
 			if i == '1':
 				high_time = self.short_delay
 				low_time = self.long_delay
-			
+			elif i=='0':
+				high_time = self.long_delay
+				low_time = self.short_delay
+			else:
+				continue
 			gpio.output(self.TX, gpio.HIGH)
 			time.sleep(high_time)
 			gpio.output(self.TX, gpio.LOW)
