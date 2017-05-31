@@ -47,7 +47,9 @@ class TXRXProtocol(object):
 	stabilizer_byte = '0000'
 	pad_byte = '10011111'
 	trail_byte = '010'
-	threading.Thread(target=self._correct_errors).start()
+
+	def __init__(self):
+		threading.Thread(target=self._correct_errors).start()
 
 	def _correct_errors(self):
 		time.sleep(1)
@@ -91,6 +93,7 @@ class RFDriver(TXRXProtocol):
 
 
 	def __init__(self, tx_pin, rx_pin, debug=0):
+		super(RFDriver, self).__init__()
 		self.TX = tx_pin
 		self.RX = rx_pin
 		self.debug = debug
