@@ -155,11 +155,13 @@ class RFDriver(TXRXProtocol):
 				gpio.setup(self.RX, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 			if gpio.input(self.RX):
 				high_count+=1
-			else:
-				if high_count: 
-					if high_count > 1:
-						if self.debug==3: print 'high:',high_count, '\t0' if high_count <= 4 else '\t1'
+			else: 
+				if high_count > 1:
+					if self.debug==3: print 'high:',high_count, '\t0' if high_count <= 4 else '\t1'
+					if cpuinfo.this_is_a_pi(): 
 						self._buffer += '0' if high_count < 4 else '1'
+					else:
+						self._buffer += '1' if high_count < 4 else '0'
 				high_count=0
 			time.sleep(self.half_pulse)
 		print '**Ended RF receiving thread'
