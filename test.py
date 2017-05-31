@@ -36,9 +36,11 @@ def tune(args, debug=0):
 	cont = True
 
 	def quitit():
+		global cont
 		while True:
 			r = raw_input()
 			if r and r[0]=='q':
+				print 'quiting'
 				cont = False
 				break
 
