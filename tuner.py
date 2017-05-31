@@ -1,5 +1,5 @@
 from txrx import RFMessenger, gpio
-import threading
+import threading, time
 
 
 class RFTuner(RFMessenger):
@@ -19,3 +19,4 @@ class RFTuner(RFMessenger):
 
 if __name__ == '__main__':
 	RF = RFTuner(tx_pin='CSID0', rx_pin='XIO-P0')
+	raw_input()
