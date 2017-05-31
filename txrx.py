@@ -144,7 +144,7 @@ class RFDriver(TXRXProtocol):
 			if gpio.input(self.RX):
 				high_count+=1
 			else: 
-				if high_count > 1:
+				if high_count > 1 and high_count < 8:
 					if cpuinfo.this_is_a_pi():
 						self._buffer += '0' if high_count < 4 else '1'
 						if self.debug==3: print 'high:',high_count, '\t0' if high_count <= 4 else '\t1'
