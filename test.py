@@ -1,5 +1,4 @@
-from txrx import RFMessenger
-import cpuinfo
+from txrx import RFMessenger, cpuinfo
 import time
 import argparse
 import threading
