@@ -40,9 +40,9 @@ class TXRXProtocol(object):
 	_serr = sleeperror()
 	# short_delay = 0.001
 	# half_pulse = short_delay*0.27
-	# short_delay = 0.0004
+	short_delay = 0.0004-_serr
 	# half_pulse = short_delay*0.222
-	short_delay = 0.0006-_serr
+	# short_delay = 0.0006-_serr
 	half_pulse = short_delay*0.214
 	long_delay = short_delay*2-_serr
 	stabilizer_byte = '0000'
