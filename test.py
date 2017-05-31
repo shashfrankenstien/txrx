@@ -74,10 +74,9 @@ def cli(args, debug=0):
 		while True:
 			c = raw_input()
 			if c:
-				c.split()
 				if c[0]=='p':
-					ping(c[1])
-				elif c=='q':
+					ping(c[1:])
+				elif c[0]=='q':
 					break
 			print 'unrecognized'
 
