@@ -43,7 +43,7 @@ class TXRXProtocol(object):
 	# short_delay = 0.0004
 	# half_pulse = short_delay*0.222
 	short_delay = 0.0006-_serr
-	half_pulse = short_delay*0.27-_serr
+	half_pulse = short_delay*0.3-_serr
 	long_delay = short_delay*2-_serr
 	stabilizer_byte = '0000'
 	pad_byte = '10011111'
@@ -158,8 +158,8 @@ class RFDriver(TXRXProtocol):
 			else:
 				if high_count: 
 					if high_count > 1:
-						if self.debug==3: print 'high:',high_count, '\t1' if high_count <= 4 else '\t0'
-						self._buffer += '1' if high_count < 4 else '0'
+						if self.debug==3: print 'high:',high_count, '\t0' if high_count <= 4 else '\t1'
+						self._buffer += '0' if high_count < 4 else '1'
 				high_count=0
 			time.sleep(self.half_pulse)
 		print '**Ended RF receiving thread'
