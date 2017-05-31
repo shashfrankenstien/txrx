@@ -185,6 +185,7 @@ class RFDriver(TXRXProtocol):
 
 
 	def listen(self):
+		time.sleep(0.5)
 		self.receiving = True
 		self.receiveThread = threading.Thread(target=self._receiver)
 		self.receiveThread.start()
