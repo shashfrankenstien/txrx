@@ -143,7 +143,7 @@ class RFDriver(TXRXProtocol):
 			bit = None
 			if cpuinfo.this_is_a_pi(): 
 				gpio.setmode(gpio.BOARD)
-			gpio.setup(self.RX, gpio.IN, pull_up_down=gpio.PUD_DOWN)
+				gpio.setup(self.RX, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 			if gpio.input(self.RX):
 				high_count+=1
 			else: 
