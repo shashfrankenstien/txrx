@@ -8,12 +8,12 @@ def check_sleep(amount):
     delta = end - start
     return delta.seconds + delta.microseconds/1000000.0
 
-def sleeperror(n=20):
+def sleeperror(amount=0.050, n=20):
 	error = 0
 	for i in range(n):
-	    error += abs(check_sleep(0.050) - 0.050)
+	    error += abs(check_sleep(amount) - amount)
 	error /= n
 	return error
 
 if __name__ == '__main__':
-	print sleeperror()
+	print sleeperror(0.0006)

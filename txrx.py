@@ -3,9 +3,10 @@ __author__ = "Shashank Gopikrishna"
 __version__ = "0.0.1"
 __email__ = "shashank.gopikrishna@gmail.com"
 
-import cpuinfo
 import time
 import threading
+import cpuinfo
+from sleeptest import sleeperror
 
 # Check if it is a respberry pi
 if cpuinfo.this_is_a_pi():
@@ -41,11 +42,19 @@ class TXRXProtocol(object):
 	# short_delay = 0.0004
 	# half_pulse = short_delay*0.222
 	short_delay = 0.0006
-	half_pulse = short_delay*0.27
+	half_pulse = short_delay*0.33
 	long_delay = short_delay*2
 	stabilizer_byte = '0000'
 	pad_byte = '10011111'
 	trail_byte = '010'
+	threading.Thread(target=self._correct_errors).start()
+
+	def _correct_errors(self):
+		time.sleep(1)
+		e = sleeperror()
+		self.short_delay -= e
+		self.long_delay -= e
+		self.half_pulse -= e
 
 	def _byte_contain(self, byte):
 		return self.stabilizer_byte+self.pad_byte+byte+self.trail_byte
