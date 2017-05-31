@@ -299,7 +299,7 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 			self.send(self._proto_ping_to(dest))
 			if double: self.send(self._proto_ping_to(dest))
 			send_time = time.time()
-			while self._ping_tracker[dest] == '' and time.time()-send_time < 2:
+			while self._ping_tracker[dest] == '' and time.time()-send_time < 3:
 				time.sleep(0.01) 
 			if not silent:
 				if self._ping_tracker[dest]!= '':
