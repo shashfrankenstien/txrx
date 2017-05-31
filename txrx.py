@@ -35,7 +35,7 @@ def rand_id_gen(size=64):
 
 
 class TXRXProtocol(object):
-	short_delay = 0.001
+	short_delay = 0.01
 	half_pulse = short_delay*0.3
 	# short_delay = 0.0004
 	# half_pulse = short_delay*0.222
@@ -348,7 +348,7 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 
 def tune(debug=0):
 	points = []
-	t = 0.22
+	t = 0.2
 	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
 	l = threading.Lock()
 	RF.listen()
