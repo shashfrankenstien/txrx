@@ -114,7 +114,6 @@ class RFDriver(TXRXProtocol):
 		for i in bn_encl:
 			high_time = self.long_delay
 			low_time = self.short_delay
-			low_time = 0
 			if i == '1':
 				high_time = self.short_delay
 				low_time = self.long_delay
