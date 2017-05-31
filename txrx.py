@@ -147,20 +147,12 @@ class RFDriver(TXRXProtocol):
 				high_count+=1
 			else: 
 				if high_count > 1 and high_count < 8:
-					if cpuinfo.this_is_a_pi():
-						if high_count < 4:
-							bit = '0'
-						else: 
-							bit = '1'
-						self._buffer += bit
-						if self.debug==3: print 'high:',high_count, '\t', bit
-					else:
-						if high_count < 4:
-							bit = '0'
-						else: 
-							bit = '1'
-						self._buffer += bit
-						if self.debug==3: print 'high:',high_count, '\t', bit
+					if high_count < 4:
+						bit = '0'
+					else: 
+						bit = '1'
+					self._buffer += bit
+					if self.debug==3: print 'high:',high_count, '\t', bit
 				high_count=0
 			time.sleep(self.half_pulse)
 		print '**Ended RF receiving thread'
