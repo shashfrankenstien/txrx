@@ -34,7 +34,7 @@ def bitwise(args, debug=0):
 
 def tune(args, debug=0):
 	points = []
-	t = 0.1
+	t = 0.15
 	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
 	l = threading.Lock()
 	RF.listen()
