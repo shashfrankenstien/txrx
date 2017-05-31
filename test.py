@@ -84,8 +84,8 @@ def cli(args, debug=0):
 if __name__ == '__main__':
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-t','--tx', help='Transmitter pin', default='37')
-	parser.add_argument('-r','--rx', help='Receiver pin', default='40')
+	parser.add_argument('-t','--tx', help='Transmitter pin')
+	parser.add_argument('-r','--rx', help='Receiver pin')
 
 	parser.add_argument('-d', '--debug', help='Debug modes 0, 1 or 2', action="count", default=0)
 	parser.add_argument('-u', '--tune', help='Tuning monitor', action="store_true")
@@ -96,11 +96,11 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	if cpuinfo.this_is_a_pi():
-		tx = int(args.tx)
-		rx = int(args.rx)
+		tx = int(args.tx) if args.tx else 37
+		rx = int(args.rx) if args.tx else 40
 	else:
-		tx = args.tx
-		rx = args.rx
+		tx = args.tx if args.tx else 'CSID0'
+		rx = args.rx if args.rx else 'CSID1'
 
 	
 
