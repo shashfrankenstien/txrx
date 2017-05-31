@@ -52,7 +52,7 @@ class TXRXProtocol(object):
 	def _byte_contain(self, byte):
 		return self.stabilizer_byte+self.pad_byte+byte+self.trail_byte
 
-	def _find_one_message(self, string, mlength=8):
+	def _find_one_message(self, string, mlength):
 		msg = None
 		remainder = string
 		try:
@@ -69,6 +69,18 @@ class TXRXProtocol(object):
 			if self.debug: print str(e)
 		return msg, remainder
 	
+	def _find_messages(self, string, mlength=8):
+		msgs = []
+		while len(string)>16:
+			msg, string = self._find_one_message(string, mlength)
+			if msg:
+				msgs.append(msg)
+			else:
+				break
+		return msgs, string
+
+
+
 
 class RFDriver(TXRXProtocol):
 	'''
@@ -172,16 +184,16 @@ class RFDriver(TXRXProtocol):
 		while self.receiving or len(self._buffer):
 			string += self._fetch_from_buffer()
 			if len(string):
-				msg, remainder = self._find_one_message(string)
-				if msg:
-					if self.debug: print 'message found {} in {}'.format(msg, string)
-					for func in self._subscriptions:
-						try:
-							func(msg)
-							# print 'LastChar = ', string[s+8]
-						except Exception as e: 
-							if self.debug==1: print str(e)
-				string = remainder
+				msgs, string = self._find_messages(string)
+				if msgs:
+					for msg in msgs:
+						if self.debug: print 'message found {} in {}'.format(msg, string)
+						for func in self._subscriptions:
+							try:
+								func(msg)
+								# print 'LastChar = ', string[s+8]
+							except Exception as e: 
+								if self.debug==1: print str(e)
 			# if len(string)<16: time.sleep(0.1)
 			time.sleep(0.01)
 		print '**Ended RF processing thread'
