@@ -155,9 +155,9 @@ class RFDriver(TXRXProtocol):
 						if self.debug==3: print 'high:',high_count, '\t', bit
 					else:
 						if high_count < 4:
-							bit = '0'
-						else: 
 							bit = '1'
+						else: 
+							bit = '0'
 						self._buffer += bit
 						if self.debug==3: print 'high:',high_count, '\t', bit
 				high_count=0
