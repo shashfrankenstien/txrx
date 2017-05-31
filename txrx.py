@@ -100,7 +100,7 @@ class RFDriver(TXRXProtocol):
 			if cpuinfo.this_is_a_pi(): gpio.setmode(gpio.BOARD)
 			gpio.setwarnings(False)
 			gpio.setup(self.TX, gpio.OUT, initial=gpio.LOW)
-			gpio.setup(self.RX, gpio.IN, pull_up_down=gpio.PUD_UP)
+			gpio.setup(self.RX, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 		except Exception as e:
 			print str(e)
 
@@ -114,17 +114,18 @@ class RFDriver(TXRXProtocol):
 		if cpuinfo.this_is_a_pi(): gpio.setmode(gpio.BOARD)
 		for i in bn_encl:
 			if i == '1':
-				high_time = self.short_delay
-				low_time = self.long_delay
+				gpio.output(self.TX, gpio.HIGH)
+				time.sleep(self.short_delay)
+				gpio.output(self.TX, gpio.LOW)
+				time.sleep(self.long_delay)
 			elif i == '0':
-				high_time = self.long_delay
-				low_time = self.short_delay
+				gpio.output(self.TX, gpio.HIGH)
+				time.sleep(self.long_delay)
+				gpio.output(self.TX, gpio.LOW)
+				time.sleep(self.short_delay)
 			else:
 				continue
-			gpio.output(self.TX, gpio.HIGH)
-			time.sleep(high_time)
-			gpio.output(self.TX, gpio.LOW)
-			time.sleep(low_time)
+			
 		if self.debug==3: print 'sent ', code
 		gpio.output(self.TX, 0)
 
@@ -143,7 +144,7 @@ class RFDriver(TXRXProtocol):
 			bit = None
 			if cpuinfo.this_is_a_pi(): 
 				gpio.setmode(gpio.BOARD)
-			gpio.setup(self.RX, gpio.IN, pull_up_down=gpio.PUD_UP)
+			gpio.setup(self.RX, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 			if gpio.input(self.RX):
 				high_count+=1
 			else: 
