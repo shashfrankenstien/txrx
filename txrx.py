@@ -11,6 +11,7 @@ from lib.sleepTest import sleeperror
 # Check if device is a respberry pi
 if cpuinfo.this_is_a_pi():
 	import RPi.GPIO as gpio
+	print cpuinfo.who_am_i()
 	tx = 37
 	rx = 40
 
