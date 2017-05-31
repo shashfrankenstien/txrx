@@ -353,7 +353,7 @@ def tune(debug=0):
 	l = threading.Lock()
 	RF.listen()
 
-	while t<=0.300:
+	while t<=0.330:
 		l.acquire()
 		RF.half_pulse = RF.short_delay*t
 		l.release()
