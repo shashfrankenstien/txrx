@@ -27,11 +27,12 @@ else:
 
 
 
-
 def rand_id_gen(size=64):
 	"""Generates salt for password encryption"""
 	alph = str(string.lowercase+string.digits)*2
 	return str(''.join(random.sample(alph, size)))
+
+
 
 
 class TXRXProtocol(object):
