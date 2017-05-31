@@ -37,20 +37,22 @@ def rand_id_gen(size=64):
 
 
 class TXRXProtocol(object):
+	_serr = sleeperror()
 	# short_delay = 0.001
 	# half_pulse = short_delay*0.27
 	# short_delay = 0.0004
 	# half_pulse = short_delay*0.222
-	short_delay = 0.0006
-	half_pulse = short_delay*0.33
-	long_delay = short_delay*2
+	short_delay = 0.0006-_serr
+	half_pulse = short_delay*0.33-_serr
+	long_delay = short_delay*2-_serr
 	stabilizer_byte = '0000'
 	pad_byte = '10011111'
 	trail_byte = '010'
 
 	def __init__(self):
-		threading.Thread(target=self._correct_errors).start()
-		time.sleep(1)
+		pass
+		# threading.Thread(target=self._correct_errors).start()
+		# time.sleep(1)
 
 	def _correct_errors(self):
 		e = sleeperror()
