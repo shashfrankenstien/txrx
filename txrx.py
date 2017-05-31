@@ -376,7 +376,7 @@ if __name__ == '__main__':
 	parser.add_argument('-d', '--debug', help='Debug modes 0, 1 or 2', action="count", default=0)
 	parser.add_argument('-t', '--tune', help='Tuning monitor', action="store_true")
 
-	parser.add_argument('-s', '--samp', help='Receiver thread sampling factor', default=0.222)
+	parser.add_argument('-s', '--samp', help='Receiver thread sampling factor', default=0.222, type=float)
 
 	args = parser.parse_args()
 	debug = args.debug
