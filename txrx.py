@@ -112,7 +112,6 @@ class RFDriver(TXRXProtocol):
 		bn_encl = self._byte_contain(code)
 		if cpuinfo.this_is_a_pi(): gpio.setmode(gpio.BOARD)
 		for i in bn_encl:
-			if self.debug==3: print 'sending ',i
 			if i == '1':
 				gpio.output(self.TX, gpio.HIGH)
 				time.sleep(self.short_delay)
