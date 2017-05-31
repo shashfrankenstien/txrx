@@ -396,6 +396,8 @@ if __name__ == '__main__':
 		RF.half_pulse = RF.short_delay*args.samp
 		RF.listen()
 		RF.transmit_binary(args.bitwise)
+		time.sleep(3)
+		RF.terminate()
 	else:
 		start = time.time()
 		RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
