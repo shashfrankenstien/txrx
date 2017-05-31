@@ -142,7 +142,7 @@ class RFDriver(TXRXProtocol):
 				high_count+=1
 			else:
 				if high_count: 
-					if self.debug==3: print 'high:',high_count
+					if self.debug==3: print 'high:',high_count, '= 0' if high_count < 4 else '= 1'
 					self._buffer += '0' if high_count < 4 else '1'
 				high_count=0
 			time.sleep(self.half_pulse)
@@ -381,15 +381,22 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-d', '--debug', help='Debug modes 0, 1 or 2', action="count", default=0)
 	parser.add_argument('-t', '--tune', help='Tuning monitor', action="store_true")
-
-	parser.add_argument('-s', '--samp', help='Receiver thread sampling factor', default=0.222, type=float)
+	parser.add_argument('-b', '--bitwise', help='Bitwise send', type=str)
+	parser.add_argument('-s', '--samp', help='Receiver thread sampling factor', default=0.244, type=float)
 
 	args = parser.parse_args()
 	debug = args.debug
 	if debug > 3: debug=3
 	print 'debug =', debug
 
-	if not args.tune:
+	if args.tune:
+		tune(debug)
+	elif args.bitwise:
+		RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=3)
+		RF.half_pulse = RF.short_delay*args.samp
+		RF.listen()
+		RF.transmit_binary(args.bitwise)
+	else:
 		start = time.time()
 		RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
 		RF.half_pulse = RF.short_delay*args.samp
@@ -400,8 +407,7 @@ if __name__ == '__main__':
 		print '3way completed in {}'.format(time.time()-start)
 		time.sleep(4)
 		RF.terminate()
-	else:
-		tune(debug)
+		
 
 	# RFd = RFDriver(tx_pin=tx, rx_pin=rx, debug=1)
 	# RFd.listen()
