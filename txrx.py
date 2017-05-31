@@ -6,7 +6,7 @@ __email__ = "shashank.gopikrishna@gmail.com"
 import time
 import threading
 import cpuinfo
-from sleeptest import sleeperror
+from sleepTest import sleeperror
 
 # Check if it is a respberry pi
 if cpuinfo.this_is_a_pi():
