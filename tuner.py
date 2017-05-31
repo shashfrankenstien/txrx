@@ -23,9 +23,9 @@ class RFTuner(RFMessenger):
 		else:
 			if self.high_tracker > 1 and self.high_tracker < 8:
 				if self.high_tracker < 4:
-					bit = '0' if cpuinfo.this_is_a_pi() else '1'
+					bit = '0'
 				else: 
-					bit = '1' if cpuinfo.this_is_a_pi() else '0'
+					bit = '1'
 				self._buffer += bit
 				if self.debug==3: print 'high:',self.high_tracker, '\t', bit
 
