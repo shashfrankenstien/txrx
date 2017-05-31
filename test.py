@@ -33,13 +33,22 @@ def bitwise(args, debug=0):
 	RF.terminate()
 
 def tune(args, debug=0):
+	cont = True
+
+	def quitit():
+		while True:
+			r = raw_input()
+			if r and r[0]=='q':
+				cont = False
+				break
+
 	points = []
 	t = 0.15
 	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
 	l = threading.Lock()
 	RF.listen()
-
-	while t<=0.330:
+	threading.Thread(target=quitit).start()
+	while cont and t<=0.330:
 		l.acquire()
 		RF.half_pulse = RF.short_delay*t
 		l.release()
