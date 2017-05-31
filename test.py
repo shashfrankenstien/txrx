@@ -45,7 +45,7 @@ def tune(args, debug=0):
 				break
 
 	points = []
-	t = 0.15
+	t = 0.18
 	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
 	l = threading.Lock()
 	RF.listen()
