@@ -374,7 +374,10 @@ if __name__ == '__main__':
 	import argparse
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-d', '--debug', help='Debug modes 0, 1 or 2', action="count", default=0)
-	parser.add_argument('-t', '--tune', help='Debug modes 0, 1 or 2', action="store_true")
+	parser.add_argument('-t', '--tune', help='Tuning monitor', action="store_true")
+
+	parser.add_argument('-s', '--samp', help='Receiver thread sampling factor', default=0.222)
+
 	args = parser.parse_args()
 	debug = args.debug
 	if debug > 3: debug=3
@@ -383,6 +386,7 @@ if __name__ == '__main__':
 	if not args.tune:
 		start = time.time()
 		RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
+		RF.half_pulse = RF.short_delay*args.samp
 		RF.subscribe(demo_printer)
 		RF.listen()
 		if RF.ping(RF.__id__, n=3, silent=False):
