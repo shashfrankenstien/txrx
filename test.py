@@ -1,36 +1,121 @@
 from txrx import RFMessenger
+import cpuinfo
 import time
 import argparse
 import threading
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-t','--tx', help='Transmitter pin', type=int)
-parser.add_argument('-r','--rx', help='Receiver pin', type=int)
 
-args = parser.parse_args()
-tx = args.tx
-rx = args.rx
+def fwayHshake(args, debug):
 
-def defFunc(m):
-	print m
+	def demo_printer(msg):
+		print 'Received -> '+str(msg)
+		if '3way' in msg:
+			print 'replying'
+			RF.send('Upgrade to 4way')
+			
+	start = time.time()
+	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
+	if args.samp: RF.half_pulse = RF.short_delay*args.samp
+	RF.subscribe(demo_printer)
+	RF.listen()
+	if RF.ping(RF.__id__, n=3, silent=False):
+		RF.send('3way h-shake is an extremely long message. Seems like it will shit out.')
+	print '3way completed in {}'.format(time.time()-start)
+	time.sleep(4)
+	RF.terminate()
 
-def ping():
-	RF.ping(RF.__id__, silent=False)
+def bitwise(args, debug=0):
+	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
+	if args.samp: RF.half_pulse = RF.short_delay*args.samp
+	RF.listen()
+	RF.transmit_binary(args.bitwise)
+	time.sleep(3)
+	RF.terminate()
 
-def command():
-	while True:
-		c = raw_input()
-		if c:
-			if c=='p':
-				ping()
-			elif c=='q':
-				break
-		print 'unrecognized'
+def tune(args, debug=0):
+	points = []
+	t = 0.2
+	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
+	l = threading.Lock()
+	RF.listen()
 
-RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=3)
-RF.subscribe(defFunc)
-RF.listen()
+	while t<=0.330:
+		l.acquire()
+		RF.half_pulse = RF.short_delay*t
+		l.release()
+		print '#############    sleep time = {}'.format(t)
+		start = time.time()
+		if RF.ping(RF.__id__, n=1, silent=False):
+			points.append((t, time.time()-start))
+		t += 0.001
 
-command()
+	RF.terminate()
+	import json
+	for i in points: print i
 
-RF.terminate()
+
+
+def cli(args, debug=0):
+	def defFunc(m):
+		print m
+
+	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
+	RF.subscribe(defFunc)
+	RF.listen()
+	
+	def ping():
+		RF.ping(RF.__id__, silent=False)
+
+	def command():
+		while True:
+			c = raw_input()
+			if c:
+				if c=='p':
+					ping()
+				elif c=='q':
+					break
+			print 'unrecognized'
+
+	command()
+	RF.terminate()
+
+
+
+if __name__ == '__main__':
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-t','--tx', help='Transmitter pin', default='37')
+	parser.add_argument('-r','--rx', help='Receiver pin', default='40')
+
+	parser.add_argument('-d', '--debug', help='Debug modes 0, 1 or 2', action="count", default=0)
+	parser.add_argument('-u', '--tune', help='Tuning monitor', action="store_true")
+	parser.add_argument('-c', '--cli', help='CLI to test ping', action="store_true")
+	parser.add_argument('-b', '--bitwise', help='Bitwise send', type=str)
+	parser.add_argument('-s', '--samp', help='Receiver thread sampling factor', type=float)
+
+	args = parser.parse_args()
+
+	if cpuinfo.this_is_a_pi():
+		tx = int(args.tx)
+		rx = int(args.rx)
+	else:
+		tx = args.tx
+		rx = args.rx
+
+	
+
+	args = parser.parse_args()
+	debug = args.debug
+	if debug > 3: debug=3
+	print 'debug =', debug
+
+	if args.tune:
+		tune(args, debug)
+	elif args.cli:
+		cli(args, debug)
+
+	elif args.bitwise:
+		bitwise(args, debug)
+	else:
+		fwayHshake(args, debug)
+		
