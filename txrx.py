@@ -92,11 +92,13 @@ class RFDriver(TXRXProtocol):
 		self._setup_gpio()
 
 	def _setup_gpio(self):
-		if cpuinfo.this_is_a_pi(): gpio.setmode(gpio.BOARD)
-		# gpio.setwarnings(False)
-		gpio.setup(self.TX, gpio.OUT)
-		gpio.setup(self.RX, gpio.IN, pull_up_down=gpio.PUD_DOWN)
-
+		try:
+			if cpuinfo.this_is_a_pi(): gpio.setmode(gpio.BOARD)
+			# gpio.setwarnings(False)
+			gpio.setup(self.TX, gpio.OUT)
+			gpio.setup(self.RX, gpio.IN, pull_up_down=gpio.PUD_DOWN)
+		except Exception as e:
+			print str(e)
 
 	def _defaultSubscription(self, bn):
 		print 'Message Received->', str(bn)
