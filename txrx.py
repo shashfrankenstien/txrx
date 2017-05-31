@@ -43,7 +43,7 @@ class TXRXProtocol(object):
 	# short_delay = 0.0004
 	# half_pulse = short_delay*0.222
 	short_delay = 0.0006-_serr
-	half_pulse = short_delay*0.32-_serr
+	half_pulse = short_delay*0.214
 	long_delay = short_delay*2-_serr
 	stabilizer_byte = '0000'
 	pad_byte = '10011111'
@@ -395,11 +395,38 @@ def demo_printer(msg):
 
 
 
+def cli(debug):
+	def defFunc(m):
+		print m
+
+	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
+	RF.subscribe(defFunc)
+	RF.listen()
+	
+	def ping():
+		RF.ping(RF.__id__, silent=False)
+
+	def command():
+		while True:
+			c = raw_input()
+			if c:
+				if c=='p':
+					ping()
+				elif c=='q':
+					break
+			print 'unrecognized'
+
+	command()
+	RF.terminate()
+
+
+
 if __name__ == '__main__':
 	import argparse
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-d', '--debug', help='Debug modes 0, 1 or 2', action="count", default=0)
 	parser.add_argument('-t', '--tune', help='Tuning monitor', action="store_true")
+	parser.add_argument('-c', '--cli', help='CLI to test ping', action="store_true")
 	parser.add_argument('-b', '--bitwise', help='Bitwise send', type=str)
 	parser.add_argument('-s', '--samp', help='Receiver thread sampling factor', type=float)
 
@@ -410,6 +437,9 @@ if __name__ == '__main__':
 
 	if args.tune:
 		tune(debug)
+	elif args.cli:
+		cli(debug)
+
 	elif args.bitwise:
 		RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=3)
 		if args.samp: RF.half_pulse = RF.short_delay*args.samp
