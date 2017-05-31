@@ -18,4 +18,4 @@ class RFTuner(RFMessenger):
 
 
 if __name__ == '__main__':
-	RF = RFTuner(tx_pin='CSID0', rx_pin='CSID1')
+	RF = RFTuner(tx_pin='CSID0', rx_pin='XIO-P0')
