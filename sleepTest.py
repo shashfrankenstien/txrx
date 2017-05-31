@@ -13,6 +13,7 @@ def sleeperror(amount=0.001, n=100):
 	for i in range(n):
 	    error += abs(check_sleep(amount) - amount)
 	error /= n
+	print error
 	return error
 
 if __name__ == '__main__':
