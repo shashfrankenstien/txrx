@@ -99,8 +99,8 @@ class RFDriver(TXRXProtocol):
 		try:
 			if cpuinfo.this_is_a_pi(): gpio.setmode(gpio.BOARD)
 			gpio.setwarnings(False)
-			gpio.setup(self.TX, gpio.OUT)
-			gpio.setup(self.RX, gpio.IN)
+			gpio.setup(self.TX, gpio.OUT, initial=gpio.LOW)
+			gpio.setup(self.RX, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 		except Exception as e:
 			print str(e)
 
