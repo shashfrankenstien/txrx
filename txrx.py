@@ -36,7 +36,7 @@ def rand_id_gen(size=64):
 
 class TXRXProtocol(object):
 	short_delay = 0.01
-	half_pulse = short_delay*0.1
+	half_pulse = short_delay*0.3
 	# short_delay = 0.0004
 	# half_pulse = short_delay*0.222
 	# short_delay = 0.0006
@@ -142,9 +142,9 @@ class RFDriver(TXRXProtocol):
 				high_count+=1
 			else:
 				if high_count: 
-					if high_count > 5:
-						if self.debug==3: print 'high:',high_count, '\t1' if high_count < 15 else '\t0'
-						self._buffer += '1' if high_count < 15 else '0'
+					if high_count > 1:
+						if self.debug==3: print 'high:',high_count, '\t1' if high_count < 4 else '\t0'
+						self._buffer += '1' if high_count < 4 else '0'
 				high_count=0
 			time.sleep(self.half_pulse)
 		print '**Ended RF receiving thread'
