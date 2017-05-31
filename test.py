@@ -37,10 +37,13 @@ def tune(args, debug=0):
 	global cont
 	cont = True
 	points = []
-
 	t = 0.18
+
+	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
+	if args.samp: RF.half_pulse = RF.short_delay*args.samp
 	l = threading.Lock()
 	RF.listen()
+	
 	while cont and t<=0.330:
 		l.acquire()
 		RF.half_pulse = RF.short_delay*t
