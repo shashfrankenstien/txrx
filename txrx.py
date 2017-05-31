@@ -113,17 +113,17 @@ class RFDriver(TXRXProtocol):
 		if cpuinfo.this_is_a_pi(): gpio.setmode(gpio.BOARD)
 		for i in bn_encl:
 			if i == '1':
-				gpio.output(self.TX, gpio.HIGH)
-				time.sleep(self.short_delay)
-				gpio.output(self.TX, gpio.LOW)
-				time.sleep(self.long_delay)
+				high_time = self.short_delay
+				low_time = self.long_delay
 			elif i == '0':
-				gpio.output(self.TX, gpio.HIGH)
-				time.sleep(self.long_delay)
-				gpio.output(self.TX, gpio.LOW)
-				time.sleep(self.short_delay)
+				high_time = self.long_delay
+				low_time = self.short_delay
 			else:
 				continue
+			gpio.output(self.TX, gpio.HIGH)
+			time.sleep(high_time)
+			gpio.output(self.TX, gpio.LOW)
+			time.sleep(low_time)
 		gpio.output(self.TX, 0)
 
 
@@ -146,12 +146,16 @@ class RFDriver(TXRXProtocol):
 			else: 
 				if high_count > 1 and high_count < 8:
 					if cpuinfo.this_is_a_pi():
-						print 'here'
-						self._buffer += '0' if high_count < 4 else '1'
+						if high_count < 4:
+							bit = '0'
+						else: 
+							bit = '1'
 						if self.debug==3: print 'high:',high_count, '\t0' if high_count <= 4 else '\t1'
 					else:
-						self._buffer += '1' if high_count < 4 else '0'
-						if self.debug==3: print 'high:',high_count, '\t1' if high_count <= 4 else '\t0'
+						if high_count < 4:
+							self._buffer += '0'  
+						else: 
+							self._buffer += '1'
 				high_count=0
 			time.sleep(self.half_pulse)
 		print '**Ended RF receiving thread'
