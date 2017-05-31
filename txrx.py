@@ -174,7 +174,7 @@ class RFDriver(TXRXProtocol):
 							if self.debug==2: print str(e)
 				string = remainder
 			# if len(string)<16: time.sleep(0.1)
-			time.sleep(0.02)
+			time.sleep(0.01)
 		print '**Ended RF processing thread'
 
 
