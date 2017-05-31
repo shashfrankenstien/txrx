@@ -31,10 +31,11 @@ class RFTuner(RFMessenger):
 
 
 if __name__ == '__main__':
+	debug = 2
 	if cpuinfo.this_is_a_chip():
-		RF = RFTuner(tx_pin='CSID0', rx_pin='XIO-P0')
+		RF = RFTuner(tx_pin='CSID0', rx_pin='XIO-P0', debug=debug)
 	else:
-		RF = RFTuner(tx_pin=37, rx_pin=40)
+		RF = RFTuner(tx_pin=37, rx_pin=40, debug=debug)
 	p = raw_input()
 	if p[0]=='p':
 		RF.ping(silent=False)
