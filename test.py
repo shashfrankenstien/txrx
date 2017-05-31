@@ -4,8 +4,8 @@ import argparse
 import threading
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-t','--tx', help='Transmitter pin', type=int)
-parser.add_argument('-r','--rx', help='Receiver pin', type=int)
+parser.add_argument('-t','--tx', help='Transmitter pin', type=str)
+parser.add_argument('-r','--rx', help='Receiver pin', type=str)
 
 args = parser.parse_args()
 tx = args.tx
