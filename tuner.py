@@ -6,7 +6,7 @@ class RFTuner(RFMessenger):
 
 	def __init__(self, tx_pin, rx_pin, debug=0):
 		super(RFTuner, self).__init__(tx_pin, rx_pin, debug)
-		gpio.add_event_detect(rx_pin, gpio.BOTH, callback=self.listen_falling, bouncetime=200)
+		gpio.add_event_detect(rx_pin, gpio.BOTH, callback=self.listen_falling, bouncetime=100)
 		# gpio.add_event_detect(rx_pin, gpio.RISING, callback=self.listen_rising)
 		self.high_tracker = 0
 		self.processThread = threading.Thread(target=self._processor)
@@ -40,3 +40,4 @@ if __name__ == '__main__':
 	if p[0]=='p':
 		RF.ping(silent=False)
 		time.sleep(2)
+		print RF._fetch_from_buffer()
