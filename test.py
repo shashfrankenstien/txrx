@@ -60,6 +60,7 @@ def cli(args, debug=0):
 		print m
 
 	RF = RFMessenger(tx_pin=tx, rx_pin=rx, debug=debug)
+	if args.samp: RF.half_pulse = RF.short_delay*args.samp
 	RF.subscribe(defFunc)
 	RF.listen()
 	
