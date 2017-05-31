@@ -115,7 +115,7 @@ class RFDriver(TXRXProtocol):
 			if i == '1':
 				high_time = self.short_delay
 				low_time = self.long_delay
-			elif i=='0':
+			elif i == '0':
 				high_time = self.long_delay
 				low_time = self.short_delay
 			else:
@@ -148,9 +148,9 @@ class RFDriver(TXRXProtocol):
 			else: 
 				if high_count > 1 and high_count < 8:
 					if high_count < 4:
-						bit = '0' if cpuinfo.this_is_a_pi() else '1'
+						bit = '1'# if cpuinfo.this_is_a_pi() else '1'
 					else: 
-						bit = '1' if cpuinfo.this_is_a_pi() else '0'
+						bit = '0'# if cpuinfo.this_is_a_pi() else '0'
 					self._buffer += bit
 					if self.debug==3: print 'high:',high_count, '\t', bit
 				high_count=0
@@ -173,7 +173,7 @@ class RFDriver(TXRXProtocol):
 							func(msg)
 							# print 'LastChar = ', string[s+8]
 						except Exception as e: 
-							if self.debug==2: print str(e)
+							if self.debug==1: print str(e)
 				string = remainder
 			# if len(string)<16: time.sleep(0.1)
 			time.sleep(0.01)
@@ -294,13 +294,12 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 		for i in xrange(n):
 			for ch in msg:
 				self.transmit_char(ch)
-				time.sleep(0.01)
 			if n>1: time.sleep(delay)
 		return True
 
 
-	def ping(self, dest, n=1, double=False, silent=True):
-		# if not dest: dest = self.__id__
+	def ping(self, dest=None, n=1, double=False, silent=True):
+		if not dest: dest = self.__id__
 		self._ping_tracker[dest] = ''
 		while self._ping_tracker[dest] != self.PONG and n>0:
 			self._ping_tracker[dest] = ''
