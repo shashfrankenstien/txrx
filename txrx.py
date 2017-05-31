@@ -147,7 +147,7 @@ class RFDriver(TXRXProtocol):
 			if gpio.input(self.RX):
 				high_count+=1
 			else: 
-				if high_count > 1 and high_count < 8:
+				if high_count > 1 and high_count < 10:
 					if high_count < 4:
 						bit = '0'# if cpuinfo.this_is_a_pi() else '1'
 					else: 
@@ -308,7 +308,7 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 			self.send(self._proto_ping_to(dest))
 			if double: self.send(self._proto_ping_to(dest))
 			send_time = time.time()
-			while self._ping_tracker[dest] == '' and time.time()-send_time < 4:
+			while self._ping_tracker[dest] == '' and time.time()-send_time < 3:
 				time.sleep(0.01) 
 			if not silent:
 				if self._ping_tracker[dest]!= '':
