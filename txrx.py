@@ -143,8 +143,8 @@ class RFDriver(TXRXProtocol):
 			else:
 				if high_count: 
 					if high_count > 5:
-						if self.debug==3: print 'high:',high_count, '\t0' if high_count < 15 else '\t1'
-						self._buffer += '0' if high_count < 15 else '1'
+						if self.debug==3: print 'high:',high_count, '\t1' if high_count < 15 else '\t0'
+						self._buffer += '1' if high_count < 15 else '0'
 				high_count=0
 			time.sleep(self.half_pulse)
 		print '**Ended RF receiving thread'
