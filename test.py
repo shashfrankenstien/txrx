@@ -43,14 +43,14 @@ def tune(args, debug=0):
 	if args.samp: RF.half_pulse = RF.short_delay*args.samp
 	l = threading.Lock()
 	RF.listen()
-	
+
 	while cont and t<=0.330:
 		l.acquire()
 		RF.half_pulse = RF.short_delay*t
 		l.release()
 		print '#############    sleep time = {}'.format(t)
 		start = time.time()
-		if RF.ping(silent=False):
+		if RF.ping(RF.__id__, silent=False):
 			points.append((t, time.time()-start))
 		t += 0.001
 	RF.terminate()

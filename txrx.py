@@ -297,8 +297,8 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 		return True
 
 
-	def ping(self, dest=None, n=1, double=False, silent=True):
-		if not dest: dest = self.__id__
+	def ping(self, dest, n=1, double=False, silent=True):
+		# if not dest: dest = self.__id__
 		self._ping_tracker[dest] = ''
 		while self._ping_tracker[dest] != self.PONG and n>0:
 			self._ping_tracker[dest] = ''
