@@ -21,13 +21,13 @@ class RFTuner(RFMessenger):
 		if gpio.input(x):
 			self.high_tracker+=1
 		else:
-			if high_count > 1 and high_count < 8:
-				if high_count < 4:
+			if self.high_tracker > 1 and self.high_tracker < 8:
+				if self.high_tracker < 4:
 					bit = '0' if cpuinfo.this_is_a_pi() else '1'
 				else: 
 					bit = '1' if cpuinfo.this_is_a_pi() else '0'
 				self._buffer += bit
-				if self.debug==3: print 'high:',high_count, '\t', bit
+				if self.debug==3: print 'high:',self.high_tracker, '\t', bit
 
 
 if __name__ == '__main__':
