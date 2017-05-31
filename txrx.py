@@ -287,6 +287,7 @@ class RFMessenger(RFDriver, RFMessageProtocol):
 		for i in xrange(n):
 			for ch in msg:
 				self.transmit_char(ch)
+				time.sleep(0.01)
 			if n>1: time.sleep(delay)
 		return True
 
