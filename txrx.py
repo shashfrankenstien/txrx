@@ -95,7 +95,7 @@ class RFDriver(TXRXProtocol):
 		if cpuinfo.this_is_a_pi(): gpio.setmode(gpio.BOARD)
 		# gpio.setwarnings(False)
 		gpio.setup(self.TX, gpio.OUT, initial=gpio.LOW)
-		gpio.setup(self.RX, gpio.IN)
+		gpio.setup(self.RX, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 
 
 	def _defaultSubscription(self, bn):
@@ -132,8 +132,9 @@ class RFDriver(TXRXProtocol):
 		high_count = 0
 		print '**Started RF receiving thread'
 		while self.receiving:
-			if cpuinfo.this_is_a_pi(): gpio.setmode(gpio.BOARD)
-			gpio.setup(self.RX, gpio.IN)
+			if cpuinfo.this_is_a_pi(): 
+				gpio.setmode(gpio.BOARD)
+				gpio.setup(self.RX, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 			if gpio.input(self.RX):
 				high_count+=1
 			else:
