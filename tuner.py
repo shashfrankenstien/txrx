@@ -13,7 +13,7 @@ class RFTuner(RFMessenger):
 	def listen_rising(self):
 		print 'rose'
 
-	def listen_falling(self):
+	def listen_falling(self, x):
 		print 'fell'
 
 
