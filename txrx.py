@@ -124,6 +124,7 @@ class RFDriver(TXRXProtocol):
 			time.sleep(high_time)
 			gpio.output(self.TX, gpio.LOW)
 			time.sleep(low_time)
+		if debug==3: print 'sent, ', code
 		gpio.output(self.TX, 0)
 
 
