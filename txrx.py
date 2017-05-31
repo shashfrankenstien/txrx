@@ -44,7 +44,7 @@ class TXRXProtocol(object):
 	# half_pulse = short_delay*0.222
 	short_delay = 0.0008-_serr
 	half_pulse = short_delay*0.273
-	long_delay = short_delay*2-_serr
+	long_delay = short_delay*3-_serr
 	stabilizer_byte = '0000'
 	pad_byte = '10011111'
 	trail_byte = '010'
