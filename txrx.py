@@ -50,9 +50,9 @@ class TXRXProtocol(object):
 
 	def __init__(self):
 		threading.Thread(target=self._correct_errors).start()
+		time.sleep(1)
 
 	def _correct_errors(self):
-		time.sleep(1)
 		e = sleeperror()
 		self.short_delay -= e
 		self.long_delay -= e
